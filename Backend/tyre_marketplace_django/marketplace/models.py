@@ -7,6 +7,8 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 import os
+from django.core.exceptions import ValidationError
+
 
 class CaseSensitiveUsernameValidator(UnicodeUsernameValidator):
     def __call__(self, value):
@@ -15,9 +17,9 @@ class CaseSensitiveUsernameValidator(UnicodeUsernameValidator):
         from django.contrib.auth import get_user_model
         User = get_user_model()
         if User.objects.filter(username__exact=value).exists():
-            raise models.ValidationError(
-                _('A user with that username already exists.'),
-                code='unique',
+            raise ValidationError(
+                _("Enter a valid username. Only letters, digits, and @/./+/-/_ are allowed."),
+                code='invalid',
             )
 
 class User(AbstractUser):

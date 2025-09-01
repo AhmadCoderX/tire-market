@@ -183,7 +183,7 @@ const SpecificationsSection: React.FC<SpecificationsSectionProps> = ({
   return (
     <View
       style={{
-        flexDirection: isMobile ? 'column' : 'row',
+        flexDirection: isMobile ? 'column' : 'column',
         gap: isMobile ? 0 : 32,
         width: '100%',
         paddingHorizontal: isMobile ? 16 : 0,
@@ -258,16 +258,6 @@ const SpecificationsSection: React.FC<SpecificationsSectionProps> = ({
             error={errors.condition}
             containerStyle={styles.inputField}
           />
-          <RangeSlider
-            label="Tread Depth (mm)"
-            minValue={1}
-            maxValue={10}
-            step={0.5}
-            value={parseFloat(treadDepth) || 1}
-            onValueChange={onTreadDepthChange}
-            error={errors.treadDepth}
-            containerStyle={styles.smallRangeSlider}
-          />
           <PillToggle
             label="Quantity"
             options={quantityOptions}
@@ -276,15 +266,30 @@ const SpecificationsSection: React.FC<SpecificationsSectionProps> = ({
             error={errors.quantity}
             containerStyle={styles.inputField}
           />
-          <MileageInput
-            label="Mileage"
-            value={mileage}
-            onValueChange={onMileageChange}
-            unit={mileageUnit}
-            onUnitChange={onMileageUnitChange}
-            error={errors.mileage}
-            containerStyle={styles.inputField}
-          />
+          {condition === "used" && (
+            <RangeSlider
+              label="Tread Depth (mm)"
+              minValue={1}
+              maxValue={10}
+              step={0.5}
+              value={parseFloat(treadDepth) || 1}
+              onValueChange={onTreadDepthChange}
+              error={errors.treadDepth}
+              containerStyle={styles.smallRangeSlider}
+            />
+          )}
+
+          {condition === "used" && (
+            <MileageInput
+              label="Mileage"
+              value={mileage}
+              onValueChange={onMileageChange}
+              unit={mileageUnit}
+              onUnitChange={onMileageUnitChange}
+              error={errors.mileage}
+              containerStyle={styles.inputField}
+            />
+          )}
           <MultiSelectPill
             label="Vehicle Type"
             options={vehicleTypeOptions}
@@ -367,31 +372,36 @@ const SpecificationsSection: React.FC<SpecificationsSectionProps> = ({
               error={errors.condition}
               containerStyle={styles.inputField}
             />
-            <RangeSlider
-              label="Tread Depth (mm)"
-              minValue={1}
-              maxValue={10}
-              step={0.5}
-              value={parseFloat(treadDepth) || 1}
-              onValueChange={onTreadDepthChange}
-              error={errors.treadDepth}
-              containerStyle={styles.smallRangeSlider}
-            />
+            {condition === "used" && (
+              <RangeSlider
+                label="Tread Depth (mm)"
+                minValue={1}
+                maxValue={10}
+                step={0.5}
+                value={parseFloat(treadDepth) || 1}
+                onValueChange={onTreadDepthChange}
+                error={errors.treadDepth}
+                containerStyle={styles.smallRangeSlider}
+              />
+            )}
+
+            {condition === "used" && (
+              <MileageInput
+                label="Mileage"
+                value={mileage}
+                onValueChange={onMileageChange}
+                unit={mileageUnit}
+                onUnitChange={onMileageUnitChange}
+                error={errors.mileage}
+                containerStyle={styles.inputField}
+              />
+            )}
             <PillToggle
               label="Quantity"
               options={quantityOptions}
               selectedValue={quantity}
               onSelect={onQuantityChange}
               error={errors.quantity}
-              containerStyle={styles.inputField}
-            />
-            <MileageInput
-              label="Mileage"
-              value={mileage}
-              onValueChange={onMileageChange}
-              unit={mileageUnit}
-              onUnitChange={onMileageUnitChange}
-              error={errors.mileage}
               containerStyle={styles.inputField}
             />
             <MultiSelectPill

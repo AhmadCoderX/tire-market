@@ -2,8 +2,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { FilterParams, TireListingResponse } from "../types";
 
-export const API_BASE_URL = 'http://localhost:5000/api';
-const MEDIA_BASE_URL = 'http://localhost:5000';
+export const API_BASE_URL = 'http://127.0.0.1:8000/api';
+const MEDIA_BASE_URL = 'http://127.0.0.1:8000/';
 
 // Helper function to ensure URLs are absolute
 export const ensureAbsoluteUrl = (url: string | undefined | null | { uri: string }) => {
@@ -203,7 +203,7 @@ export const requestPasswordReset = async (email: string) => {
   try {
     console.log('Requesting password reset for:', email);
     
-    const response = await fetch(`${API_BASE_URL}/auth/request-password-reset/`, {
+    const response = await fetch(`${API_BASE_URL}/auth/request-reset/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

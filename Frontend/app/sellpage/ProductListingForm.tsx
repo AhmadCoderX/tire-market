@@ -148,7 +148,7 @@ const ProductListingForm: React.FC = () => {
     try {
       const token = await AsyncStorage.getItem('accessToken');
       console.log('Token retrieved:', token ? 'Yes' : 'No');
-      
+
       if (!token) {
         Alert.alert('Error', 'Please log in to create a listing');
         setIsSubmitting(false);
@@ -198,8 +198,8 @@ const ProductListingForm: React.FC = () => {
       const numericTreadDepth = parseFloat(treadDepth);
 
       // Validate required numeric fields
-      if (isNaN(numericWidth) || isNaN(numericAspectRatio) || isNaN(numericDiameter) || 
-          isNaN(numericLoadIndex) || isNaN(numericQuantity) || isNaN(numericTreadDepth)) {
+      if (isNaN(numericWidth) || isNaN(numericAspectRatio) || isNaN(numericDiameter) ||
+        isNaN(numericLoadIndex) || isNaN(numericQuantity) || isNaN(numericTreadDepth)) {
         Alert.alert('Error', 'Please ensure all numeric fields are valid numbers');
         setIsSubmitting(false);
         return;
@@ -210,8 +210,8 @@ const ProductListingForm: React.FC = () => {
         price: formattedPrice,
         description: description.trim(),
         condition: condition.toLowerCase() as 'new' | 'used',
-        tire_type: primaryTireType as 'all_season' | 'winter' | 'summer' | 'performance' | 'mud_terrain' | 'all_terrain',
-        vehicle_type: vehicleType as 'passenger' | 'suv' | 'truck' | 'motorcycle' | 'van' | 'others',
+        tire_type: primaryTireType as 'all_season' | 'winter' | 'summer' | 'performance' | 'mud_terrain' | 'all_terrain' | 'commercial',
+        vehicle_type: vehicleType as 'passenger' | 'suv' | 'truck' | 'motorcycle' | 'van' | 'others' | 'construction',
         width: numericWidth,
         aspect_ratio: numericAspectRatio,
         diameter: numericDiameter,
@@ -229,7 +229,7 @@ const ProductListingForm: React.FC = () => {
       try {
         const response = await createListing(token, listingData, images);
         console.log("Listing created successfully:", response);
-        
+
         // Show success popup
         setShowSuccessPopup(true);
 
@@ -261,10 +261,10 @@ const ProductListingForm: React.FC = () => {
       } catch (error: any) {
         console.error('Error creating listing:', error);
         let errorMessage = 'Failed to create listing. ';
-        
+
         if (error instanceof Error) {
           errorMessage = error.message;
-          
+
           // Check for listing limit error
           if (errorMessage.includes('maximum limit') && errorMessage.includes('Upgrade to a business account')) {
             Alert.alert(
@@ -272,8 +272,8 @@ const ProductListingForm: React.FC = () => {
               errorMessage,
               [
                 { text: "Cancel", style: "cancel" },
-                { 
-                  text: "Upgrade Account", 
+                {
+                  text: "Upgrade Account",
                   style: "default",
                   onPress: () => {
                     // Navigate to upgrade page
@@ -285,7 +285,7 @@ const ProductListingForm: React.FC = () => {
             return;
           }
         }
-        
+
         Alert.alert("Error", errorMessage);
       }
     } catch (error) {
@@ -346,22 +346,22 @@ const ProductListingForm: React.FC = () => {
     if (!width) {
       newErrors.width = "Width is required";
     }
-    
+
     if (!aspectRatio) {
       newErrors.aspectRatio = "Aspect ratio is required";
     }
-    
+
     if (!diameter) {
       newErrors.diameter = "Diameter is required";
     }
 
-    if (!loadIndex) {
-      newErrors.loadIndex = "Load index is required";
-    }
+    // if (!loadIndex) {
+    //   newErrors.loadIndex = "Load index is required";
+    // }
 
-    if (!speedRating) {
-      newErrors.speedRating = "Speed rating is required";
-    }
+    // if (!speedRating) {
+    //   newErrors.speedRating = "Speed rating is required";
+    // }
 
     if (!treadDepth) {
       newErrors.treadDepth = "Tread depth is required";
@@ -396,9 +396,9 @@ const ProductListingForm: React.FC = () => {
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
       >
-        <Header 
-          onSearch={() => {}}
-          onProfilePress={() => {}}
+        <Header
+          onSearch={() => { }}
+          onProfilePress={() => { }}
         />
 
         <ScrollView
@@ -438,12 +438,6 @@ const ProductListingForm: React.FC = () => {
                 </Text>
               </View>
             )}
-            <ImageUploadSection
-              images={images}
-              onAddImage={handleAddImage}
-              onRemoveImage={handleRemoveImage}
-              error={errors.images}
-            />
 
             <BasicInfoSection
               title={title}
@@ -491,6 +485,13 @@ const ProductListingForm: React.FC = () => {
               vehicleType={vehicleType}
               onVehicleTypeChange={setVehicleType}
               errors={errors}
+            />
+
+            <ImageUploadSection
+              images={images}
+              onAddImage={handleAddImage}
+              onRemoveImage={handleRemoveImage}
+              error={errors.images}
             />
 
             <View style={styles.actionsContainer}>

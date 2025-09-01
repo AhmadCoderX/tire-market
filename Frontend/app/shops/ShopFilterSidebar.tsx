@@ -20,7 +20,7 @@ const ShopFilterSidebar: React.FC<ShopFilterSidebarProps> = ({
   filters,
   onFilterChange,
 }) => {
-  const [availableServices, setAvailableServices] = useState<Array<{label: string, value: string}>>([]);
+  const [availableServices, setAvailableServices] = useState<Array<{ label: string, value: string }>>([]);
   const [loadingServices, setLoadingServices] = useState(true);
 
   useEffect(() => {
@@ -28,13 +28,13 @@ const ShopFilterSidebar: React.FC<ShopFilterSidebarProps> = ({
       try {
         setLoadingServices(true);
         const response = await getServicesList();
-        
+
         // Convert services array to the format expected by ShopFilterOption
         const formattedServices = response.services.map(service => ({
           label: service,
           value: service
         }));
-        
+
         setAvailableServices(formattedServices);
       } catch (error) {
         console.error('Error fetching services:', error);
@@ -51,63 +51,49 @@ const ShopFilterSidebar: React.FC<ShopFilterSidebarProps> = ({
   const handleServicesChange = (service: string) => {
     const currentServices = filters.services || [];
     let newServices: string[];
-    
+
     if (currentServices.includes(service)) {
       newServices = currentServices.filter((s: string) => s !== service);
     } else {
       newServices = [...currentServices, service];
     }
-    
-    onFilterChange({ 
-      ...filters, 
-      services: newServices.length > 0 ? newServices : undefined 
+
+    onFilterChange({
+      ...filters,
+      services: newServices.length > 0 ? newServices : undefined
     });
   };
 
   const handleRatingChange = (rating: number | undefined) => {
-    onFilterChange({ 
-      ...filters, 
-      rating_min: rating 
+    onFilterChange({
+      ...filters,
+      rating_min: rating
     });
   };
 
   const handleOperatingHoursChange = (hours: string) => {
     const currentHours = filters.operating_hours || [];
     let newHours: string[];
-    
+
     if (currentHours.includes(hours)) {
       newHours = currentHours.filter((h: string) => h !== hours);
     } else {
       newHours = [...currentHours, hours];
     }
-    
-    onFilterChange({ 
-      ...filters, 
-      operating_hours: newHours.length > 0 ? newHours : undefined 
+
+    onFilterChange({
+      ...filters,
+      operating_hours: newHours.length > 0 ? newHours : undefined
     });
   };
 
   return (
     <View style={styles.sidebarWrapper}>
-      <ScrollView 
+      <ScrollView
         style={styles.container}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        <View style={styles.section}>
-          <ShopRatingFilter 
-            selectedRating={filters.rating_min}
-            onRatingChange={handleRatingChange}
-          />
-        </View>
-
-        <View style={styles.section}>
-          <ShopOperatingHoursFilter 
-            selectedHours={filters.operating_hours || []}
-            onOperatingHoursChange={handleOperatingHoursChange}
-          />
-        </View>
-
         <View style={styles.section}>
           <ShopFilterOption
             title="Services Offered"
@@ -116,6 +102,20 @@ const ShopFilterSidebar: React.FC<ShopFilterSidebarProps> = ({
             onSelect={handleServicesChange}
             multiSelect={true}
             loading={loadingServices}
+          />
+        </View>
+
+        <View style={styles.section}>
+          <ShopOperatingHoursFilter
+            selectedHours={filters.operating_hours || []}
+            onOperatingHoursChange={handleOperatingHoursChange}
+          />
+        </View>
+
+        <View style={styles.section}>
+          <ShopRatingFilter
+            selectedRating={filters.rating_min}
+            onRatingChange={handleRatingChange}
           />
         </View>
       </ScrollView>
