@@ -182,6 +182,13 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, onFilterChange }
         contentContainerStyle={styles.scrollContent}
       >
         <View style={styles.section}>
+          <BrandFilter 
+            selectedBrand={selectedBrand}
+            onBrandChange={handleBrandChange}
+          />
+        </View>
+
+        <View style={styles.section}>
           <TireSizeFilter onSizeSelect={handleTireSizeSelect} />
         </View>
 
@@ -196,13 +203,6 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, onFilterChange }
           <LoadIndexFilter 
             selectedLoadIndices={filters.load_index || []}
             onLoadIndexChange={handleLoadIndexChange}
-          />
-        </View>
-
-        <View style={styles.section}>
-          <BrandFilter 
-            selectedBrand={selectedBrand}
-            onBrandChange={handleBrandChange}
           />
         </View>
 

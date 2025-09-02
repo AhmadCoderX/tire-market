@@ -432,9 +432,8 @@ const ProductListingForm: React.FC = () => {
                     style={{ color: '#3A593F', textDecorationLine: 'underline', fontWeight: '600' }}
                     onPress={handleUpgradeClick}
                   >
-                    upgrade
+                    upgrade.
                   </Text>
-                  .
                 </Text>
               </View>
             )}

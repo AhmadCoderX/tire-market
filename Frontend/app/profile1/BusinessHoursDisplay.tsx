@@ -1,77 +1,69 @@
 import React from 'react';
-import { View, Text, StyleSheet, useColorScheme, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { FONTS, FONT_STYLES } from '../constants/fonts';
+
+interface BusinessHours {
+  [key: string]: {
+    isOpen: boolean;
+    from: string;
+    to: string;
+  };
+}
 
 interface BusinessHoursDisplayProps {
-  businessHours: {
-    [key: string]: {
-      isOpen: boolean;
-      from: string;
-      to: string;
-    };
-  } | string | null;
+  businessHours: string;
 }
 
 const BusinessHoursDisplay: React.FC<BusinessHoursDisplayProps> = ({ businessHours }) => {
-  const colorScheme = useColorScheme();
-  const isDarkMode = colorScheme === 'dark';
-  const { width } = useWindowDimensions();
+  const { width } = Dimensions.get('window');
   const isMobile = width < 768;
-  
-  // Get the current day of the week
-  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-  const today = days[new Date().getDay()];
-  
-  // Reorder days to start with Monday
-  const orderedDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-  
-  // Parse business hours if they're provided as a string
-  const parseBusinessHours = () => {
-    if (!businessHours) return null;
-    
-    // If it's already an object, return it
-    if (typeof businessHours !== 'string') return businessHours;
-    
+
+  // Parse business hours string
+  const parseBusinessHours = (hoursString: string): BusinessHours => {
     try {
-      // Try to parse the string as JSON
-      return JSON.parse(businessHours);
+      return JSON.parse(hoursString);
     } catch (error) {
-      console.error('Error parsing business hours string:', error);
-      
-      // If parsing fails, try to extract info from the formatted string
-      const parsedHours: {[key: string]: {isOpen: boolean, from: string, to: string}} = {};
-      const lines = businessHours.split('\n');
-      
-      for (const line of lines) {
-        // Example format: "Monday: 9:00 AM - 5:00 PM"
-        const match = line.match(/^(.*?):\s*(.*?)$/);
-        if (match) {
-          const [_, day, hours] = match;
-          
-          if (hours.toLowerCase().includes('closed')) {
-            parsedHours[day] = { isOpen: false, from: '', to: '' };
-          } else if (hours.toLowerCase().includes('not available')) {
-            // Skip this day as we don't have data
-          } else {
-            const timeParts = hours.split('-').map(part => part.trim());
-            if (timeParts.length === 2) {
-              parsedHours[day] = { isOpen: true, from: timeParts[0], to: timeParts[1] };
-            }
-          }
-        }
-      }
-      
-      return Object.keys(parsedHours).length > 0 ? parsedHours : null;
+      console.error('Error parsing business hours:', error);
+      return {};
     }
   };
-  
-  const parsedBusinessHours = parseBusinessHours();
-  
-  if (!parsedBusinessHours) {
+
+  const parsedBusinessHours = parseBusinessHours(businessHours);
+
+  // Get today's day name
+  const getToday = (): string => {
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    return days[new Date().getDay()];
+  };
+
+  const today = getToday();
+
+  // Order days starting from Monday
+  const orderedDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+  // Format time to ensure consistent 12-hour format
+  const formatTime = (time: string): string => {
+    // If time is already in 12-hour format, return as is
+    if (time.includes('AM') || time.includes('PM')) {
+      return time;
+    }
+    
+    // If time is in 24-hour format, convert to 12-hour
+    if (time.includes(':')) {
+      const [hours, minutes] = time.split(':');
+      const hour = parseInt(hours);
+      const ampm = hour >= 12 ? 'PM' : 'AM';
+      const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+      return `${displayHour}:${minutes} ${ampm}`;
+    }
+    
+    return time;
+  };
+
+  if (!businessHours || businessHours === '{}' || businessHours === 'null') {
     return (
       <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>
-          No business hours provided
-        </Text>
+        <Text style={styles.emptyText}>Business hours not available</Text>
       </View>
     );
   }
@@ -90,7 +82,9 @@ const BusinessHoursDisplay: React.FC<BusinessHoursDisplayProps> = ({ businessHou
           } else if (!dayData.isOpen) {
             hoursText = 'Closed';
           } else {
-            hoursText = `${dayData.from} – ${dayData.to}`;
+            const fromTime = formatTime(dayData.from);
+            const toTime = formatTime(dayData.to);
+            hoursText = `${fromTime} – ${toTime}`;
           }
           
           return (
@@ -142,7 +136,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   emptyText: {
-    fontSize: 15,
+    ...FONT_STYLES.body,
     color: '#666666',
     fontStyle: 'italic',
   },
@@ -166,12 +160,12 @@ const styles = StyleSheet.create({
     marginVertical: 2,
   },
   dayText: {
-    fontSize: 15,
+    ...FONT_STYLES.body,
     fontWeight: '500',
     color: '#344E41',
   },
   hoursText: {
-    fontSize: 15,
+    ...FONT_STYLES.body,
     color: '#344E41',
   },
   todayText: {
@@ -179,7 +173,8 @@ const styles = StyleSheet.create({
     color: '#3A593F',
   },
   closedText: {
-    color: '#B32F22',
+    color: '#EF4444',
+    fontStyle: 'italic',
   },
 });
 

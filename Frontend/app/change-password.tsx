@@ -61,13 +61,15 @@ const ChangePasswordScreen = () => {
     try {
       // If we have a token, use the API reset password
       if (token) {
+        console.log('Resetting password with token:', token);
         await resetPassword(token as string, password);
+        
         Alert.alert(
           'Password Reset Successful',
           'Your password has been reset successfully. You can now login with your new password.',
           [
             {
-              text: 'OK',
+              text: 'Login Now',
               onPress: () => router.push('/login')
             }
           ]
@@ -85,14 +87,35 @@ const ChangePasswordScreen = () => {
           ]
         );
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Password reset failed:', error);
+      
+      // Handle specific error types
+      let errorMessage = 'An error occurred while resetting your password. Please try again.';
+      
+      if (error.message) {
+        if (error.message.includes('token') || error.message.includes('expired')) {
+          errorMessage = 'Your password reset link has expired or is invalid. Please request a new password reset.';
+        } else if (error.message.includes('network') || error.message.includes('connection')) {
+          errorMessage = 'Network error. Please check your internet connection and try again.';
+        } else if (error.message.includes('server')) {
+          errorMessage = 'Server error. Please try again later.';
+        } else if (error.message.includes('password')) {
+          errorMessage = error.message;
+        }
+      }
+      
       Alert.alert(
         'Password Reset Failed',
-        error instanceof Error ? error.message : 'An error occurred while resetting your password. Please try again.',
+        errorMessage,
         [
           {
-            text: 'OK'
+            text: 'Try Again',
+            onPress: () => {} // Stay on the same screen
+          },
+          {
+            text: 'Request New Reset',
+            onPress: () => router.push('/forgot')
           }
         ]
       );

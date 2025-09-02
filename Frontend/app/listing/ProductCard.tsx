@@ -1,6 +1,7 @@
 import * as React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { useResponsiveLayout } from "./useResponsiveLayout";
+import { FONTS, FONT_STYLES } from '../constants/fonts';
 
 interface ProductCardProps {
   title: string;
@@ -196,7 +197,6 @@ const styles = StyleSheet.create({
   productInfo: {
     minWidth: 240,
     width: 451,
-    fontFamily: "Inter, -apple-system, Roboto, Helvetica, sans-serif",
   },
   productInfoSmall: {
     width: "100%",
@@ -205,11 +205,8 @@ const styles = StyleSheet.create({
     width: "60%",
   },
   title: {
+    ...FONT_STYLES.h4,
     color: "rgba(9, 9, 11, 1)",
-    fontSize: 18,
-    fontWeight: "600",
-    lineHeight: 36,
-    fontFamily: "Inter, -apple-system, Roboto, Helvetica, sans-serif",
   },
   titleSmall: {
     fontSize: 16,
@@ -223,52 +220,90 @@ const styles = StyleSheet.create({
     flexDirection: "column",
   },
   price: {
+    ...FONT_STYLES.h5,
     color: "#354E41",
-    fontSize: 16,
-    fontWeight: "700",
-    fontFamily: "Inter, -apple-system, Roboto, Helvetica, sans-serif",
   },
   postDate: {
+    ...FONT_STYLES.caption,
     color: "#969696",
-    fontSize: 14,
-    fontWeight: "400",
-    lineHeight: 14,
     marginTop: 8,
-    fontFamily: "Inter, -apple-system, Roboto, Helvetica, sans-serif",
   },
   specificationSection: {
     marginTop: 12,
     width: "100%",
     flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 84,
+    gap: 100,
   },
   specificationSectionSmall: {
     flexDirection: "column",
-    alignItems: "flex-start",
     gap: 8,
   },
   specColumn: {
-    alignSelf: "stretch",
-    marginVertical: "auto",
+    flex: 1,
+    gap: 8,
   },
   specText: {
-    color: "rgba(52, 78, 65, 1)",
-    fontSize: 14,
-    fontWeight: "400",
-    lineHeight: 14,
-    marginVertical: 2,
-    fontFamily: "Inter, -apple-system, Roboto, Helvetica, sans-serif",
+    ...FONT_STYLES.body,
+    color: "#666666",
   },
   actionSection: {
     flexDirection: "column",
+    alignItems: "flex-end",
+    gap: 8,
+    minWidth: 120,
   },
   actionSectionSmall: {
     width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
-    gap: 12,
+    marginTop: 12,
+  },
+  actionSectionMedium: {
+    minWidth: 100,
+  },
+  contactButton: {
+    backgroundColor: "#3A593F",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 6,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    minWidth: 120,
+    justifyContent: "center",
+  },
+  contactButtonSmall: {
+    flex: 1,
+    minWidth: "auto",
+  },
+  contactButtonText: {
+    ...FONT_STYLES.button,
+    color: "#FFFFFF",
+  },
+  chatButton: {
+    backgroundColor: "#FFFFFF",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: "#3A593F",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    minWidth: 120,
+    justifyContent: "center",
+  },
+  chatButtonSmall: {
+    flex: 1,
+    minWidth: "auto",
+  },
+  chatButtonText: {
+    ...FONT_STYLES.button,
+    color: "#3A593F",
+  },
+  buttonIcon: {
+    width: 16,
+    height: 16,
   },
   editButton: {
     borderRadius: 6,

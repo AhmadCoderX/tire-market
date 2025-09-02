@@ -32,6 +32,25 @@ const SellerProfile: React.FC<SellerProfileProps> = ({
   const isBusinessUser = profileData?.is_business || false;
   const totalReviews = profileData?.total_reviews || 0;
 
+  // Format time to ensure consistent 12-hour format
+  const formatTime = (time: string): string => {
+    // If time is already in 12-hour format, return as is
+    if (time.includes('AM') || time.includes('PM')) {
+      return time;
+    }
+    
+    // If time is in 24-hour format, convert to 12-hour
+    if (time.includes(':')) {
+      const [hours, minutes] = time.split(':');
+      const hour = parseInt(hours);
+      const ampm = hour >= 12 ? 'PM' : 'AM';
+      const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+      return `${displayHour}:${minutes} ${ampm}`;
+    }
+    
+    return time;
+  };
+
   // Format business hours from the backend data
   const formatBusinessHours = () => {
     // Early return if no business hours data
@@ -63,7 +82,9 @@ const SellerProfile: React.FC<SellerProfileProps> = ({
         if (dayData.isOpen === false) {
           formattedHours += `${day}: Closed\n`;
         } else {
-          formattedHours += `${day}: ${dayData.from} - ${dayData.to}\n`;
+          const fromTime = formatTime(dayData.from);
+          const toTime = formatTime(dayData.to);
+          formattedHours += `${day}: ${fromTime} - ${toTime}\n`;
         }
       }
       

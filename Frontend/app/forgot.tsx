@@ -33,11 +33,12 @@ const ForgotPasswordScreen = () => {
 
     try {
       // Request password reset via API
-      await requestPasswordReset(email);
+      const response = await requestPasswordReset(email);
+      console.log('Password reset response:', response);
       
       Alert.alert(
         'Password Reset Email Sent',
-        'If an account with this email exists, you will receive a password reset link shortly.',
+        'If an account with this email exists, you will receive a password reset link shortly. Please check your email and follow the instructions.',
         [
           {
             text: 'OK',
@@ -45,16 +46,32 @@ const ForgotPasswordScreen = () => {
           }
         ]
       );
-    } catch (error) {
+    } catch (error: any) {
       console.error('Password reset request failed:', error);
       
-      // Don't reveal if email exists or not for security
+      // Handle specific error types
+      let errorMessage = 'An error occurred while requesting password reset. Please try again.';
+      
+      if (error.message) {
+        if (error.message.includes('network') || error.message.includes('connection')) {
+          errorMessage = 'Network error. Please check your internet connection and try again.';
+        } else if (error.message.includes('server')) {
+          errorMessage = 'Server error. Please try again later.';
+        } else if (error.message.includes('email')) {
+          errorMessage = 'Please check your email address and try again.';
+        }
+      }
+      
       Alert.alert(
-        'Password Reset Email Sent',
-        'If an account with this email exists, you will receive a password reset link shortly.',
+        'Password Reset Failed',
+        errorMessage,
         [
           {
-            text: 'OK',
+            text: 'Try Again',
+            onPress: () => {} // Stay on the same screen
+          },
+          {
+            text: 'Go to Login',
             onPress: () => router.push('/login')
           }
         ]

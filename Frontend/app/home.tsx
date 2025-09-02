@@ -9,6 +9,7 @@ import AdBanner from "./home1/AdBanner";
 import { getListings } from "./services/api";
 import { FilterParams, TireListingResponse } from "./types";
 import { debounce } from 'lodash';
+import { FONTS, FONT_STYLES } from './constants/fonts';
 
 const MacBookAir39 = () => {
   // Initialize with newest as default sort

@@ -239,7 +239,8 @@ export const resetPassword = async (token: string, newPassword: string) => {
       },
       body: JSON.stringify({ 
         token,
-        new_password: newPassword 
+        new_password: newPassword,
+        confirm_password: newPassword  // Add confirm_password as required by backend
       }),
     });
 

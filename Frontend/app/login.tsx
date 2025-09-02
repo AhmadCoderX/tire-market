@@ -48,6 +48,13 @@ const LoginScreen = () => {
     return isValid;
   };
 
+  const formatUsername = (input: string) => {
+    // Remove spaces and convert to lowercase, then capitalize first letter
+    // Same logic as signup form for consistency
+    const cleaned = input.replace(/\s+/g, '').toLowerCase();
+    return cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+  };
+
   const handleLogin = async () => {
     try {
       if (!validateInputs()) {
@@ -57,8 +64,12 @@ const LoginScreen = () => {
       setIsLoading(true);
       console.log('Starting login process...');
 
-      // Call login API
-      const loginResponse = await loginUser(username, password);
+      // Format username before sending to API (same as signup)
+      const formattedUsername = formatUsername(username);
+      console.log('Original username:', username, 'Formatted username:', formattedUsername);
+
+      // Call login API with formatted username
+      const loginResponse = await loginUser(formattedUsername, password);
       console.log('Login successful');
       
       // Store tokens

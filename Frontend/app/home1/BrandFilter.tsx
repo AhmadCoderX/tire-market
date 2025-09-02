@@ -77,7 +77,7 @@ const BrandFilter: React.FC<BrandFilterProps> = ({
         )}
       </View>
 
-      {/* Selected Brand Display */}
+      {/* Selected Brand Display - Always Visible when selected */}
       {selectedBrand && (
         <View style={styles.selectedContainer}>
           <View style={styles.selectedChip}>
