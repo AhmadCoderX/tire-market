@@ -565,7 +565,7 @@ export const createListing = async (
     title: string;
     price: number;
     condition: 'new' | 'used';
-    tire_type: 'all_season' | 'winter' | 'summer' | 'performance' | 'mud_terrain' | 'all_terrain';
+    tire_type: 'all_season' | 'summer' | 'winter' | 'performance' | 'mud_terrain' | 'all_terrain' | 'highway' | 'commercial' | 'racing';
     width: number;
     aspect_ratio: number;
     diameter: number;
@@ -577,7 +577,7 @@ export const createListing = async (
     description?: string;
     mileage?: number;
     model?: string;
-    vehicle_type: 'passenger' | 'suv' | 'truck' | 'motorcycle' | 'van' | 'others';
+    vehicle_type: 'passenger' | 'suv' | 'truck' | 'motorcycle' | 'van' | 'bus' | 'trailer' | 'atv' | 'utv' | 'tractor' | 'construction' | 'industrial' | 'others';
   },
   images?: string[]
 ) => {
