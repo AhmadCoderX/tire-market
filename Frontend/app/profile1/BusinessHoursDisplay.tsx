@@ -11,21 +11,31 @@ interface BusinessHours {
 }
 
 interface BusinessHoursDisplayProps {
-  businessHours: string;
+  businessHours: BusinessHours | string | null;
 }
 
 const BusinessHoursDisplay: React.FC<BusinessHoursDisplayProps> = ({ businessHours }) => {
   const { width } = Dimensions.get('window');
   const isMobile = width < 768;
 
-  // Parse business hours string
-  const parseBusinessHours = (hoursString: string): BusinessHours => {
-    try {
-      return JSON.parse(hoursString);
-    } catch (error) {
-      console.error('Error parsing business hours:', error);
-      return {};
+  // Parse business hours - handle both string and object formats
+  const parseBusinessHours = (hours: BusinessHours | string | null): BusinessHours => {
+    if (!hours) return {};
+    
+    if (typeof hours === 'object') {
+      return hours;
     }
+    
+    if (typeof hours === 'string') {
+      try {
+        return JSON.parse(hours);
+      } catch (error) {
+        console.error('Error parsing business hours string:', error);
+        return {};
+      }
+    }
+    
+    return {};
   };
 
   const parsedBusinessHours = parseBusinessHours(businessHours);
@@ -38,11 +48,13 @@ const BusinessHoursDisplay: React.FC<BusinessHoursDisplayProps> = ({ businessHou
 
   const today = getToday();
 
-  // Order days starting from Monday
+  // Standard day order starting with Monday (matching other components)
   const orderedDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
   // Format time to ensure consistent 12-hour format
   const formatTime = (time: string): string => {
+    if (!time) return 'Not Available';
+    
     // If time is already in 12-hour format, return as is
     if (time.includes('AM') || time.includes('PM')) {
       return time;
@@ -60,7 +72,10 @@ const BusinessHoursDisplay: React.FC<BusinessHoursDisplayProps> = ({ businessHou
     return time;
   };
 
-  if (!businessHours || businessHours === '{}' || businessHours === 'null') {
+  // Check if we have any business hours data
+  const hasBusinessHours = Object.keys(parsedBusinessHours).length > 0;
+
+  if (!hasBusinessHours) {
     return (
       <View style={styles.emptyContainer}>
         <Text style={styles.emptyText}>Business hours not available</Text>
@@ -72,19 +87,27 @@ const BusinessHoursDisplay: React.FC<BusinessHoursDisplayProps> = ({ businessHou
     <View style={styles.container}>
       <View style={styles.hoursContainer}>
         {orderedDays.map((day) => {
-          // Try both lowercase and title case versions of the day name
-          const dayData = parsedBusinessHours[day] || parsedBusinessHours[day.toLowerCase()];
+          // Get the day data - try exact match first, then case variations
+          const dayData = parsedBusinessHours[day] || 
+                         parsedBusinessHours[day.toLowerCase()] || 
+                         parsedBusinessHours[day.toUpperCase()];
+          
           const isToday = day === today;
           
           let hoursText;
+          let isClosed = false;
+          
           if (!dayData) {
             hoursText = 'Not Available';
-          } else if (!dayData.isOpen) {
+          } else if (dayData.isOpen === false) {
             hoursText = 'Closed';
-          } else {
+            isClosed = true;
+          } else if (dayData.isOpen === true && dayData.from && dayData.to) {
             const fromTime = formatTime(dayData.from);
             const toTime = formatTime(dayData.to);
             hoursText = `${fromTime} – ${toTime}`;
+          } else {
+            hoursText = 'Not Available';
           }
           
           return (
@@ -104,7 +127,7 @@ const BusinessHoursDisplay: React.FC<BusinessHoursDisplayProps> = ({ businessHou
               </Text>
               <Text style={[
                 styles.hoursText,
-                !dayData?.isOpen && styles.closedText,
+                isClosed && styles.closedText,
                 isToday && styles.todayText,
                 isMobile && { marginTop: 4, marginLeft: 8 }
               ]}>
